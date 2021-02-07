@@ -1,0 +1,560 @@
+package proje3;
+
+public abstract class Kullanici {
+
+    private static int ID = 100000;
+    int id;
+    private Boolean gizliHesap = false;
+    private String adSoyad;
+    private Kullanici[] arkadasListesi;
+    private Kullanici[] beklemeListesi;
+    private Mesaj[] mesajListesi;
+    private Paylasim[] paylasimListesi;
+    private String kullaniciAdi;
+
+    public Kullanici(String kullaniciAdi, String adSoyad, Boolean gizliHesap) {
+        this.kullaniciAdi = kullaniciAdi;
+        this.adSoyad = adSoyad;
+        arkadasListesi = new Kullanici[10];
+        beklemeListesi = new Kullanici[10];
+        paylasimListesi = new Paylasim[10];
+        mesajListesi = new Mesaj[10];
+        this.gizliHesap = gizliHesap;
+        id = ID + 1;
+        ID = id;
+    }
+public abstract void indirim();
+
+    public Kullanici[] getBeklemeListesi() {
+        return beklemeListesi;
+    }
+
+    public void setBeklemeListesi(Kullanici[] beklemeListesi) {
+        this.beklemeListesi = beklemeListesi;
+    }
+
+    public Paylasim[] getPaylasimListesi() {
+        return paylasimListesi;
+    }
+
+    public Mesaj[] getMesajListesi() {
+        return mesajListesi;
+    }
+
+    public void setMesajListesi(Mesaj[] mesajListesi) {
+        this.mesajListesi = mesajListesi;
+    }
+
+    public void setPaylasimListesi(Paylasim[] paylasimListesi) {
+        this.paylasimListesi = paylasimListesi;
+    }
+
+    public String getAdSoyad() {
+        return adSoyad;
+    }
+
+    public void setAdSoyad(String adSoyad) {
+        this.adSoyad = adSoyad;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Kullanici[] getArkadasListesi() {
+        return arkadasListesi;
+    }
+
+    public void setArkadasListesi(Kullanici[] arkadasListesi) {
+        this.arkadasListesi = arkadasListesi;
+    }
+
+    public Boolean getGizliHesap() {
+        return gizliHesap;
+    }
+
+    public void setGizliHesap(Boolean gizliHesap) {
+        this.gizliHesap = gizliHesap;
+    }
+
+    public String getKullaniciAdi() {
+        return kullaniciAdi;
+    }
+
+    public void setKullaniciAdi(String kullaniciAdi) {
+        this.kullaniciAdi = kullaniciAdi;
+    }
+
+    public static int getID() {
+        return ID;
+    }
+
+    public void mesajGonder(Kullanici alici, String mesaj) {
+        for (int i = 0; i < alici.getMesajListesi().length; i++) {
+            if (alici.getMesajListesi()[i] != null
+                    && (alici.getMesajListesi()[i].gonderen.kullaniciAdi.equals(this.kullaniciAdi)
+                    || alici.getMesajListesi()[i].alici.kullaniciAdi.equals(this.kullaniciAdi))) {
+                alici.getMesajListesi()[i].setMesaj(this.kullaniciAdi + " : " + mesaj);
+                for (int j = 0; j < this.getMesajListesi().length; j++) {
+                    if (this.getMesajListesi()[j] != null
+                            && (this.getMesajListesi()[j].gonderen.kullaniciAdi.equals(this.kullaniciAdi)
+                            || this.getMesajListesi()[j].alici.kullaniciAdi.equals(this.kullaniciAdi))) {
+                        this.getMesajListesi()[j].setMesaj(this.kullaniciAdi + " : " + mesaj);
+                        return;
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < alici.getMesajListesi().length; i++) {
+            if (alici.getMesajListesi()[i] == null) {
+                alici.getMesajListesi()[i] = new Mesaj(this.kullaniciAdi + " : " + mesaj, alici, this);
+                for (int j = 0; j < this.getMesajListesi().length; j++) {
+                    if (this.getMesajListesi()[j] == null) {
+                        this.getMesajListesi()[j] = new Mesaj(this.kullaniciAdi + " : " + mesaj, alici, this);
+                        return;
+                    }
+                }
+            }
+        }
+        System.out.println("Mesaj kutusu dolu");
+    }
+
+    public void mesajGoruntule(Kullanici alici) {
+        for (int i = 0; i < getMesajListesi().length; i++) {
+            if (getMesajListesi()[i] != null && (getMesajListesi()[i].alici.kullaniciAdi.equals(alici.kullaniciAdi)
+                    || getMesajListesi()[i].gonderen.kullaniciAdi.equals(alici.kullaniciAdi))) {
+                for (int j = 0; j < alici.getMesajListesi()[i].getMesaj().length; j++) {
+                    if (alici.getMesajListesi()[i].getMesaj()[j] != null) {
+                        System.out.println(alici.getMesajListesi()[i].getMesaj()[j]);
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    public void arkadasListele() {
+        for (int i = 0; i < getArkadasListesi().length; i++) {
+            if (getArkadasListesi()[i] != null) {
+                System.out.println(getArkadasListesi()[i].getKullaniciAdi() + " : " + getArkadasListesi()[i].getAdSoyad());
+            }
+        }
+    }
+
+    public void arkadasSil(Kullanici kullanici) {
+        boolean kontrol = true;
+        for (int i = 0; i < getArkadasListesi().length; i++) {
+            if (getArkadasListesi()[i] == kullanici) {
+                getArkadasListesi()[i] = null;
+                kontrol = false;
+            }
+        }
+    }
+
+    public void beklemeListesineEkle(Kullanici kullanici) {
+        for (int i = 0; i < getBeklemeListesi().length; i++) {
+            if (getBeklemeListesi()[i] == null) {
+                getBeklemeListesi()[i] = kullanici;
+                break;
+            }
+
+        }
+    }
+
+    public void paylasimEkle(String paylasim) {
+        for (int i = 0; i < getPaylasimListesi().length; i++) {
+            if (getPaylasimListesi()[i] == null) {
+                getPaylasimListesi()[i] = new Paylasim(paylasim);
+                break;
+            }
+        }
+    }
+
+    public void paylasimGoruntule(Kullanici alici) {
+        for (Paylasim paylasimListesi1 : alici.getPaylasimListesi()) {
+            if (paylasimListesi1 != null) {
+                System.out.println(paylasimListesi1.paylasim);
+                System.out.println("Beğeni sayısı: " + paylasimListesi1.begeniSayisi);
+                System.out.println("Yorum sayısı: " + paylasimListesi1.yorumSayisi);
+                System.out.println("Paylaşım numarası: " + paylasimListesi1.id);
+            }
+        }
+    }
+
+    public void arkadasEkle(Kullanici yeniKullanici) {
+
+        for (int i = 0; i < getArkadasListesi().length; i++) {
+            if (getArkadasListesi()[i] == null) {
+                getArkadasListesi()[i] = yeniKullanici;
+                break;
+            }
+        }
+    }
+
+}
+
+package proje3;
+
+public class Mesaj {
+
+    public String[] mesajList;
+    public Kullanici alici;
+    public Kullanici gonderen;
+
+    public Mesaj(String mesaj, Kullanici alici, Kullanici gonderen) {
+        this.mesajList = new String[10];
+        this.mesajList[0] = mesaj;
+        this.alici = alici;
+        this.gonderen = gonderen;
+    }
+
+    public String[] getMesaj() {
+        return mesajList;
+    }
+
+    public void setMesaj(String mesaj) {
+        for (int i = 0; i < mesajList.length; i++) {
+            if (mesajList[i] == null) {
+                mesajList[i] = mesaj;
+                break;
+            }
+        }
+    }
+
+    public Kullanici getAlici() {
+        return alici;
+    }
+
+    public void setAlici(Kullanici alici) {
+        this.alici = alici;
+    }
+
+    public Kullanici getGonderen() {
+        return gonderen;
+    }
+
+    public void setGonderen(Kullanici gonderen) {
+        this.gonderen = gonderen;
+    }
+}
+
+package proje3;
+
+public class Paylasim {
+
+    private static int ID = 100000;
+    public String[] paylasimList;
+    public String yorum;
+    public int begeniSayisi;
+    public String paylasim;
+    public String[] yorumlar = new String[10];
+    public int yorumSayisi = 0;
+    int id;
+
+    public Paylasim(String paylasim) {
+        this.paylasim = paylasim;
+        id = ID + 1;
+        ID = id;
+    }
+
+    public String[] getPaylasim() {
+        return paylasimList;
+    }
+
+    public void setPaylasim(String paylasim) {
+        for (int i = 0; i < paylasimList.length; i++) {
+            if (paylasimList[i] == null) {
+                paylasimList[i] = paylasim;
+                break;
+            }
+        }
+    }
+
+    public String[] getYorumlar() {
+        return yorumlar;
+    }
+
+    public void setYorumlar(String[] yorumlar) {
+        this.yorumlar = yorumlar;
+    }
+
+    public void yorumEkle(String yorum) {
+        for (int i = 0; i < yorumlar.length; i++) {
+            if (yorumlar[i] == null) {
+                yorumlar[i] = yorum;
+                yorumSayisi += 1;
+                break;
+            }
+        }
+    }
+}
+
+package proje3;
+
+public class PremiumKullanici extends Kullanici {
+
+    private int uyelikUcreti = 20;
+
+    public PremiumKullanici(String kullaniciAdi, String adSoyad, Boolean gizliHesap) {
+        super(kullaniciAdi, adSoyad, gizliHesap);
+        this.uyelikUcreti = uyelikUcreti;
+    }
+
+    public int getUyelikUcreti() {
+        return uyelikUcreti;
+    }
+
+    public void setUyelikUcreti(int uyelikUcreti) {
+        this.uyelikUcreti = uyelikUcreti;
+    }
+
+    @Override
+    public void indirim() {
+        for (int i = 0; i < getPaylasimListesi().length; i++) {
+            if (getPaylasimListesi()[i] != null && getPaylasimListesi().length > 1) {
+                setUyelikUcreti(getUyelikUcreti() - (getUyelikUcreti() * 10) / 100);
+                break;
+            } else {
+                System.out.println("Paylaşım sayınız indirim almak için yeterli değil.");
+                break;
+            }
+        }
+        System.out.println("Yeni Üyelik Ücretiniz:" + uyelikUcreti + "₺ dir.");
+
+    }
+}
+
+package proje3;
+
+public class StandartKullanici extends Kullanici {
+
+    public StandartKullanici(String kullaniciAdi, String adSoyad, Boolean gizliHesap) {
+        super(kullaniciAdi, adSoyad, gizliHesap);
+    }
+
+    @Override
+    public void indirim() {
+        System.out.println("İndirimden faydalanamazssınız.");
+        
+    }
+    
+
+}
+
+package proje3;
+
+import java.util.Scanner;
+
+public class Test {
+
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        String islem = "0";
+
+        Kullanici logginUser = null;
+
+        Kullanici k1 = new StandartKullanici("yılmazMehmet", "Mehmet Yılmaz", false);
+        Kullanici k2 = new StandartKullanici("eliff", "Elif akgün", false);
+        Kullanici k3 = new PremiumKullanici("zeynepp", "Zeynep Koçer", false);
+        Kullanici k4 = new PremiumKullanici("aslii", "Aslı Güner", true);
+
+        Kullanici[] arrKullanicilar = new Kullanici[4];
+        arrKullanicilar[0] = k1;
+        arrKullanicilar[1] = k2;
+        arrKullanicilar[2] = k3;
+        arrKullanicilar[3] = k4;
+
+        k1.setArkadasListesi(arrKullanicilar);
+        k2.setArkadasListesi(arrKullanicilar);
+
+        String kullanici_adi;
+
+        do {
+            System.out.println("Menü");
+            System.out.println("0.Giriş yap:");
+            System.out.println("1.Paylaşımı Beğen");
+            System.out.println("2.Yorum Yap");
+            System.out.println("3.Hesap Değiştir.");
+            System.out.println("4.Mesaj at");
+            System.out.println("5.Arkadaş Ekle");
+            System.out.println("6.Arkadaş Sil");
+            System.out.println("7.Arkadaş isteklerini Listele");
+            System.out.println("8.Güncel paylaşımlar");
+            System.out.println("9.Paylaşım Yap");
+            System.out.println("10.Mesajlarımı göster");
+            System.out.println("11.İndirimlerimi Göster(Bu kısım premium kullanıcılarımız içindir..)");
+            System.out.println("12.Çıkış");
+            islem = s.next();
+
+            switch (islem) {
+                case "0":
+                    System.out.print("Giriş yapmak için kullanıcı adınızı giriniz:");
+                    kullanici_adi = s.next();
+
+                    for (int i = 0; i < arrKullanicilar.length; i++) {
+                        if (arrKullanicilar[i].getKullaniciAdi().equals(kullanici_adi)) {
+                            System.out.println(arrKullanicilar[i].getAdSoyad() + " hesabınıza giriş yapılıyor...");
+                            logginUser = arrKullanicilar[i];
+
+                        }
+                    }
+                    break;
+
+                case "1":
+
+                    System.out.println("Hangi kullanıcının paylaşımını beğenmek istersiniz?");
+                    kullanici_adi = s.next();
+
+                    for (int i = 0; i < arrKullanicilar.length; i++) {
+                        if (arrKullanicilar[i] != null && arrKullanicilar[i].getKullaniciAdi().equals(kullanici_adi)) {
+                            System.out.println("Beğenmek istediğiniz paylaşımın numarasını giriniz");
+                            int begeni_no = s.nextInt();
+                            for (int j = 0; j < arrKullanicilar[i].getPaylasimListesi().length; j++) {
+                                if (arrKullanicilar[i].getPaylasimListesi()[j] != null
+                                        && arrKullanicilar[i].getPaylasimListesi()[j].id == begeni_no) {
+                                    arrKullanicilar[i].getPaylasimListesi()[j].begeniSayisi += 1;
+                                    System.out.println("Paylaşımı beğendiniz");
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case "2":
+                    System.out.println("Hangi kullanıcının paylaşımına yorum yapmak istersiniz?");
+                    kullanici_adi = s.next();
+
+                    for (int i = 0; i < arrKullanicilar.length; i++) {
+                        if (arrKullanicilar[i] != null && arrKullanicilar[i].getKullaniciAdi().equals(kullanici_adi)) {
+                            System.out.println("Yorum yapmak istediğiniz paylaşımın numarasını giriniz");
+                            int yorum_no = s.nextInt();
+                            for (int j = 0; j < arrKullanicilar[i].getPaylasimListesi().length; j++) {
+                                if (arrKullanicilar[i].getPaylasimListesi()[j] != null
+                                        && arrKullanicilar[i].getPaylasimListesi()[j].id == yorum_no) {
+                                    System.out.println("Yorumunuz nedir?");
+                                    String yorum = s.next();
+                                    arrKullanicilar[i].getPaylasimListesi()[j].yorumEkle(yorum);
+                                    System.out.println("Yorumunuz eklendi.");
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case "3":
+                    System.out.print("Hesap değiştirmek için kullanici adı giriniz:");
+                    String hesapkullaniciAdi = s.next();
+                    for (int i = 0; i < arrKullanicilar.length; i++) {
+                        if (hesapkullaniciAdi.equals(arrKullanicilar[i].getKullaniciAdi()) && arrKullanicilar[i] != null) {
+                            logginUser = arrKullanicilar[i];
+                            System.out.println(logginUser.getAdSoyad() + " hesabınıza giriş yapılıyor...");
+                        }
+                    }
+                    break;
+
+                case "4":
+                    System.out.println("Mesaj göndermek istediğiniz kullanıcı adını giriniz:");
+                    kullanici_adi = s.next();
+
+                    for (int i = 0; i < arrKullanicilar.length; i++) {
+                        if (arrKullanicilar[i].getKullaniciAdi().equals(kullanici_adi)) {
+                            if (arrKullanicilar[i] != null) {
+                                System.out.println("Göndermek istediğiniz mesajı giriniz");
+                                String mesaj = s.next();
+                                logginUser.mesajGonder(arrKullanicilar[i], mesaj);
+                                System.out.println("Mesajınız gönderildi..");
+                            }
+                        }
+                    }
+                    break;
+                case "5":
+                    System.out.println("Eklemek istediğiniz kullanıcı adını giriniz:");
+                    String kullanici = s.next();
+
+                    for (int i = 0; i < arrKullanicilar.length; i++) {
+                        if (arrKullanicilar[i].getKullaniciAdi().equals(kullanici)) {
+                            if (!arrKullanicilar[i].getGizliHesap()) {
+                                logginUser.arkadasEkle(arrKullanicilar[i]);
+                                System.out.println("Kullanıcı eklendi, yeni arkadaş Listeniz");
+                                logginUser.arkadasListele();
+                            } else {
+
+                                arrKullanicilar[i].beklemeListesineEkle(logginUser);
+                                System.out.println(arrKullanicilar[i].getKullaniciAdi() + "'a istek gönderdiniz...");
+
+                            }
+                        }
+                    }
+
+                    break;
+                case "6":
+                    System.out.println("Silmek istediğiniz kullaniciyi giriniz:");
+                    kullanici = s.next();
+                    for (int i = 0; i < arrKullanicilar.length; i++) {
+                        if (arrKullanicilar[i].getKullaniciAdi().equals(kullanici)) {
+                            logginUser.arkadasSil(arrKullanicilar[i]);
+                            logginUser.arkadasListele();
+                        }
+                        System.out.println(arrKullanicilar[i].getKullaniciAdi() + "başarıyla sildiniz.");
+                    }
+                    break;
+                case "7":
+                    for (int i = 0; i < logginUser.getBeklemeListesi().length; i++) {
+                        if (logginUser.getBeklemeListesi()[i] != null) {
+                            System.out.println("Listenizde bekleyenler:" + logginUser.getBeklemeListesi()[i].getKullaniciAdi());
+                        }
+                    }
+
+                    break;
+                case "8":
+                    System.out.println("Hangi kullanıcının paylaşımını görüntülemek istersiniz?");
+                    kullanici_adi = s.next();
+
+                    for (int i = 0; i < arrKullanicilar.length; i++) {
+                        if (arrKullanicilar[i] != null && arrKullanicilar[i].getKullaniciAdi().equals(kullanici_adi)) {
+                            logginUser.paylasimGoruntule(arrKullanicilar[i]);
+                        }
+                    }
+                    break;
+                case "9":
+
+                    System.out.println("Yapmak istediğiniz paylaşımınızı giriniz...");
+                    String paylasim = s.next();
+                    logginUser.paylasimEkle(paylasim);
+                    System.out.println("Paylaşımınız eklendi...");
+
+                    break;
+
+                case "10":
+
+                    System.out.println("Hangi kullanıcı ile olan konuşmalarınızı görüntülemek istiyorsunuz?");
+                    kullanici_adi = s.next();
+                    for (int i = 0; i < arrKullanicilar.length; i++) {
+                        if (arrKullanicilar[i] != null && arrKullanicilar[i].getKullaniciAdi().equals(kullanici_adi)) {
+                            logginUser.mesajGoruntule(arrKullanicilar[i]);
+                        }
+                    }
+                    System.out.println("****************************");
+
+                    break;
+                case "11":
+                    for (int i = 0; i < arrKullanicilar.length; i++) {
+                        if (arrKullanicilar[i] != null && arrKullanicilar[i] == logginUser) {
+                            logginUser.indirim();
+                        }
+
+                    }
+
+                    break;
+                case "12":
+                    System.exit(12);
+                    break;
+
+            }
+
+        } while (islem != "12");
+    }
+
+}
